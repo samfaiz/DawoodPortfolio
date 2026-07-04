@@ -1,0 +1,22 @@
+{
+  "videoSrc": "/videos/hero.mp4",
+  "posterSrc": "/videos/hero-poster.jpg",
+  "introOffset": 5,
+  "captions": [
+    { "t": 0.2, "text": "Welcome. I'm Dawood Shaikh." },
+    { "t": 2.0, "text": "An experienced photographer" },
+    { "t": 3.6, "text": "with a passion for capturing" },
+    { "t": 5.0, "text": "striking product shots," },
+    { "t": 6.4, "text": "dynamic model portfolios," },
+    { "t": 7.8, "text": "and memorable events." },
+    { "t": 9.4, "text": "Check my daily updates on Instagram," },
+    { "t": 11.9, "text": "and scroll down to see my work." }
+  ],
+  "overlays": [
+    { "t": 5.0, "type": "work", "category": "Product", "exif": "F/8 · 1/160 · ISO 100", "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80" },
+    { "t": 6.4, "type": "work", "category": "Models", "exif": "F/1.8 · 1/250 · ISO 200", "image": "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=800&q=80" },
+    { "t": 7.8, "type": "work", "category": "Events", "exif": "F/2.8 · 1/125 · ISO 800", "image": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80" },
+    { "t": 9.6, "type": "instagram" },
+    { "t": 12.2, "type": "scrollCue" }
+  ]
+}

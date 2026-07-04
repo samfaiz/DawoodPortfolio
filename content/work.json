@@ -1,0 +1,19 @@
+{
+  "_comment": "PLACEHOLDERS. Replace src with your real photos (drop files in public/images/work and use /images/work/name.jpg), or point at CMS URLs in Phase 4.",
+  "categories": ["Product", "Models", "Events"],
+  "items": [
+    { "id": "p1", "category": "Product", "title": "Chronograph, brushed steel", "exif": "F/11 · 1/200 · ISO 100 · 90MM", "src": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=80", "ratio": "4/5" },
+    { "id": "p2", "category": "Product", "title": "Studio audio, low key", "exif": "F/8 · 1/160 · ISO 100 · 50MM", "src": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80", "ratio": "4/3" },
+    { "id": "p3", "category": "Product", "title": "Runner, suspended", "exif": "F/9 · 1/250 · ISO 200 · 35MM", "src": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80", "ratio": "3/2" },
+    { "id": "p4", "category": "Product", "title": "Optics on black", "exif": "F/13 · 1/160 · ISO 100 · 100MM", "src": "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1200&q=80", "ratio": "1/1" },
+    { "id": "m1", "category": "Models", "title": "Amber portrait session", "exif": "F/1.8 · 1/250 · ISO 200 · 85MM", "src": "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=1200&q=80", "ratio": "4/5" },
+    { "id": "m2", "category": "Models", "title": "Editorial, golden hour", "exif": "F/2 · 1/320 · ISO 100 · 50MM", "src": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80", "ratio": "3/4" },
+    { "id": "m3", "category": "Models", "title": "Studio look book", "exif": "F/4 · 1/160 · ISO 100 · 70MM", "src": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=80", "ratio": "1/1" },
+    { "id": "m4", "category": "Models", "title": "Portrait, hard light", "exif": "F/5.6 · 1/200 · ISO 100 · 85MM", "src": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=80", "ratio": "4/5" },
+    { "id": "e1", "category": "Events", "title": "Launch night, confetti", "exif": "F/2.8 · 1/125 · ISO 800 · 24MM", "src": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80", "ratio": "3/2" },
+    { "id": "e2", "category": "Events", "title": "Gala dinner, Dubai", "exif": "F/2.8 · 1/100 · ISO 1600 · 35MM", "src": "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1200&q=80", "ratio": "3/2" },
+    { "id": "e3", "category": "Events", "title": "Stage, front row", "exif": "F/2 · 1/250 · ISO 3200 · 135MM", "src": "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1200&q=80", "ratio": "16/10" },
+    { "id": "e4", "category": "Events", "title": "Keynote, house lights down", "exif": "F/2.8 · 1/160 · ISO 1250 · 70MM", "src": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80", "ratio": "3/2" }
+  ],
+  "floatingCards": ["p1", "m1", "e1", "p3", "m2", "e3"]
+}

@@ -1,0 +1,25 @@
+{
+  "items": [
+    {
+      "id": "product",
+      "title": "Product Photography",
+      "blurb": "Catalogue sets, hero shots and campaign imagery for brands that need their product to look inevitable.",
+      "deliverables": "Full studio setup · Retouched selects · E-commerce and campaign crops",
+      "from": "From AED 1,500 / set"
+    },
+    {
+      "id": "models",
+      "title": "Model Portfolios",
+      "blurb": "Portfolio and editorial sessions that give agencies exactly what they ask for, and a few frames they did not expect.",
+      "deliverables": "Concept and styling direction · Studio or location · Agency-ready retouching",
+      "from": "From AED 2,000 / session"
+    },
+    {
+      "id": "events",
+      "title": "Event Coverage",
+      "blurb": "Launches, galas and conferences shot like film stills. Same-night previews for your social team.",
+      "deliverables": "Full or half day coverage · Same-night preview set · Complete edited gallery in 72h",
+      "from": "From AED 2,500 / day"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "_comment": "Scrub section tuning. duration = middle clip length in seconds. frameCount = number of extracted frames (scripts/extract-frames.sh prints it). timeMap maps scroll progress p (0..1 across the pinned section) to video time t. cardPhases choreograph the floating cards.",
+  "videoSrc": "/videos/middle.mp4",
+  "framesFolder": "/frames/middle",
+  "framePrefix": "frame_",
+  "frameExt": "webp",
+  "frameCount": 240,
+  "duration": 10,
+  "timeMap": [
+    { "p": 0.0,  "t": 0.0 },
+    { "p": 0.16, "t": 0.6 },
+    { "p": 0.30, "t": 2.0 },
+    { "p": 0.52, "t": 4.5 },
+    { "p": 0.72, "t": 7.0 },
+    { "p": 0.85, "t": 8.5 },
+    { "p": 1.0,  "t": 10.0 }
+  ],
+  "cardPhases": {
+    "enter":  { "from": 0.16, "to": 0.30 },
+    "left":   { "from": 0.30, "to": 0.52 },
+    "right":  { "from": 0.52, "to": 0.72 },
+    "center": { "from": 0.72, "to": 0.85 },
+    "down":   { "from": 0.85, "to": 1.0 }
+  }
+}

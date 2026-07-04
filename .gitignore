@@ -1,0 +1,30 @@
+# dependencies
+node_modules
+
+# next.js / build output
+.next
+out
+build
+next-env.d.ts
+tsconfig.tsbuildinfo
+
+# env (keep .env.example committed)
+.env
+.env*.local
+
+# logs / OS
+*.log
+.DS_Store
+Thumbs.db
+
+# editors
+.vscode
+.idea
+
+# large media (delivered out of band, see README)
+public/videos/*.mp4
+public/frames/middle/*.webp
+
+# stray export/backup artifacts
+dawood-portfolio.zip
+/dawood-portfolio/

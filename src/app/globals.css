@@ -1,0 +1,170 @@
+@import '@fontsource-variable/big-shoulders-display';
+@import '@fontsource-variable/schibsted-grotesk';
+@import '@fontsource/fragment-mono';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------
+   Tokens. Palette is derived from the studio footage:
+   tungsten black, warm cream, amber practicals, Hasselblad red.
+------------------------------------------------------------------- */
+:root {
+  --bg: oklch(14% 0.009 65);
+  --bg-raise: oklch(17.5% 0.012 65);
+  --line: oklch(29% 0.016 68);
+  --ink: oklch(93% 0.014 78);
+  --muted: oklch(63% 0.02 72);
+  --amber: oklch(76% 0.125 68);
+  --amber-hot: oklch(83% 0.14 72);
+  --hassel-red: oklch(54% 0.19 27);
+
+  --font-display: 'Big Shoulders Display Variable', 'Arial Narrow', sans-serif;
+  --font-body: 'Schibsted Grotesk Variable', system-ui, sans-serif;
+  --font-exif: 'Fragment Mono', ui-monospace, monospace;
+
+  --space-section: clamp(6rem, 14vh, 11rem);
+  --gutter: clamp(1.25rem, 4vw, 4rem);
+}
+
+html {
+  background: var(--bg);
+  color-scheme: dark;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--amber);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Lenis smooth scroll base */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ------------------------------------------------------------------
+   Type utilities
+------------------------------------------------------------------- */
+.display {
+  font-family: var(--font-display);
+  font-weight: 780;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  line-height: 0.92;
+}
+
+.display-hero {
+  font-size: clamp(2.6rem, 8.5vw, 8.5rem);
+}
+
+.display-section {
+  font-size: clamp(2.4rem, 6.5vw, 6rem);
+}
+
+.exif {
+  font-family: var(--font-exif);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.exif b {
+  color: var(--amber);
+  font-weight: 400;
+}
+
+/* Aperture dot used as a separator glyph */
+.aperture-dot {
+  display: inline-block;
+  width: 0.4em;
+  height: 0.4em;
+  border-radius: 999px;
+  border: 1px solid var(--amber);
+  vertical-align: middle;
+}
+
+/* ------------------------------------------------------------------
+   Film grain: photography-true texture, extremely quiet.
+------------------------------------------------------------------- */
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: -50%;
+  z-index: 70;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 1.4s steps(4) infinite;
+}
+
+@keyframes grain-shift {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2%, 1.5%); }
+  50% { transform: translate(1.5%, -2%); }
+  75% { transform: translate(-1%, -1%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Marquee */
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee-x 32s linear infinite;
+}
+
+/* Caption word reveal inside the hero */
+@keyframes word-up {
+  from { opacity: 0; transform: translateY(0.55em) rotate(1.5deg); }
+  to { opacity: 1; transform: translateY(0) rotate(0); }
+}
+
+.caption-word {
+  display: inline-block;
+  animation: word-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Scroll cue */
+@keyframes cue-drop {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(0.5rem); opacity: 0.4; }
+}
+
+.scroll-cue-arrow { animation: cue-drop 1.6s ease-in-out infinite; }
+
+/* ------------------------------------------------------------------
+   Reduced motion: kill grain shift, marquee, cue bounce.
+   Components additionally swap scroll choreography for static layouts.
+------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .grain::after,
+  .marquee-track,
+  .scroll-cue-arrow,
+  .caption-word {
+    animation: none !important;
+  }
+  html { scroll-behavior: auto; }
+}

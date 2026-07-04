@@ -1,0 +1,15 @@
+{
+  "portrait": "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=1000&q=80",
+  "portraitAlt": "Dawood Shaikh in the studio, camera in hand",
+  "paragraphs": [
+    "I have spent the last decade behind a camera in Dubai, building images for brands, agencies and people who care how they are seen. The studio runs on tungsten light, medium format glass and an unreasonable attention to the frame.",
+    "Most days you will find me shooting product sets before noon and portfolio sessions after. Event weeks are their own animal. Every job gets the same treatment: plan the light, respect the subject, deliver on time."
+  ],
+  "stats": [
+    { "value": "10+", "label": "Years shooting" },
+    { "value": "400+", "label": "Completed shoots" },
+    { "value": "60+", "label": "Brands served" },
+    { "value": "72h", "label": "Gallery delivery" }
+  ],
+  "gear": ["Hasselblad H-system", "Profoto lighting", "Canon EOS R5", "35 / 50 / 85 / 100MM primes"]
+}
