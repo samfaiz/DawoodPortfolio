@@ -7,7 +7,6 @@ import {
   getTestimonials,
   getWork,
 } from '@/lib/content';
-import Preloader from '@/components/Preloader';
 import Hero from '@/components/Hero';
 import Marquee from '@/components/Marquee';
 import ScrubSection from '@/components/ScrubSection';
@@ -37,7 +36,6 @@ export default async function Page() {
 
   return (
     <main>
-      <Preloader />
       <Hero hero={hero} site={site} />
       <Marquee />
       <ScrubSection beats={beats} cards={floating} />
