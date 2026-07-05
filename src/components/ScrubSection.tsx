@@ -36,6 +36,7 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
+  const ringWrapRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -102,32 +103,36 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
     };
 
     const render = () => {
-      // Mobile skips the canvas scrub entirely (the video just plays); we only
-      // drive the lightweight 3D ring from scroll. Desktop scrubs the film.
+      // One clock both the film frame AND the ring read from, so the photos turn
+      // exactly when his head turns. Desktop: the eased scrubbed video time.
+      // Mobile: a scroll-mapped pseudo-time (the video plays on its own).
+      let tsec: number;
       if (!isMobile) {
-        const t = timeFor(progressRef.current);
+        const target = timeFor(progressRef.current);
         // Ease the displayed time toward the target for a weighted, filmic scrub.
-        shownTimeRef.current = lerp(shownTimeRef.current, t, 0.18);
-        const shown = shownTimeRef.current;
+        shownTimeRef.current = lerp(shownTimeRef.current, target, 0.18);
+        tsec = shownTimeRef.current;
 
         if (modeRef.current === 'frames') {
-          let idx = Math.round((shown / beats.duration) * (beats.frameCount - 1));
+          let idx = Math.round((tsec / beats.duration) * (beats.frameCount - 1));
           idx = Math.min(beats.frameCount - 1, Math.max(0, idx));
           while (idx > 0 && !loadedRef.current[idx]) idx--;
           const img = imagesRef.current[idx];
           if (img) drawCover(img, img.naturalWidth, img.naturalHeight);
-          if (wantsDebug) setDebug({ p: progressRef.current, t: shown, f: idx });
+          if (wantsDebug) setDebug({ p: progressRef.current, t: tsec, f: idx });
         } else if (modeRef.current === 'video') {
           const v = videoRef.current;
           if (v && v.readyState >= 2) {
-            if (Math.abs(v.currentTime - shown) > 1 / 30) v.currentTime = shown;
+            if (Math.abs(v.currentTime - tsec) > 1 / 30) v.currentTime = tsec;
             drawCover(v, v.videoWidth, v.videoHeight);
           }
-          if (wantsDebug) setDebug({ p: progressRef.current, t: shown, f: -1 });
+          if (wantsDebug) setDebug({ p: progressRef.current, t: tsec, f: -1 });
         }
+      } else {
+        tsec = progressRef.current * beats.duration;
       }
 
-      layout(progressRef.current);
+      layout(progressRef.current, tsec);
     };
 
     const startFrames = () => {
@@ -232,11 +237,21 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
     const seg = (p: number, ph: { from: number; to: number }) =>
       clamp01((p - ph.from) / (ph.to - ph.from));
 
-    const layout = (p: number) => {
+    // The gaze schedule expressed in FILM SECONDS (the progress-space cardPhases
+    // mapped through the time map), so the ring keys off the exact frame shown.
+    const T = {
+      left: { from: timeFor(phases.left.from), to: timeFor(phases.left.to) },
+      right: { from: timeFor(phases.right.from), to: timeFor(phases.right.to) },
+      center: { from: timeFor(phases.center.from), to: timeFor(phases.center.to) },
+      down: { from: timeFor(phases.down.from), to: timeFor(phases.down.to) },
+    };
+    const segT = (t: number, ph: { from: number; to: number }) =>
+      clamp01((t - ph.from) / (ph.to - ph.from));
+
+    const layout = (p: number, tsec: number) => {
       const mob = narrow();
 
-      // Frame box: pinned left with copy on the right, then expands to centre.
-      // Kept a touch smaller than before so the ring can orbit around it.
+      // Frame box grow — tied to scroll progress (the box expands as you enter).
       const grow = easeInOut(seg(p, phases.enter));
       const wVw = mob ? 88 : lerp(42, 60, grow);
       const hSvh = mob ? lerp(44, 60, grow) : lerp(58, 74, grow);
@@ -250,37 +265,41 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
         introRef.current.style.transform = `translateY(${grow * -30}px)`;
       }
 
-      /* ----- gaze-driven ring rotation ----- */
-      const MAX = mob ? 46 : 62; // degrees the ring swings at full left / right
-      const uL = easeInOut(seg(p, phases.left));
-      const uR = easeInOut(seg(p, phases.right));
-      const uC = easeInOut(seg(p, phases.center));
-      const uD = easeInOut(seg(p, phases.down));
+      /* ----- gaze-driven ring rotation, keyed to FILM TIME so the photos
+         turn exactly when his head turns (both read the same eased clock) ----- */
+      const MAX = mob ? 46 : 60; // degrees the ring swings at full left / right
+      const uL = easeInOut(segT(tsec, T.left));
+      const uR = easeInOut(segT(tsec, T.right));
+      const uC = easeInOut(segT(tsec, T.center));
+      const gather = easeInOut(segT(tsec, T.down)); // 0..1 as he looks down
 
-      // He looks left -> negative rotation (cards sweep right->left);
-      // looks right -> positive; centre -> back to 0.
-      let gazeRot = 0;
-      if (p < phases.left.from) gazeRot = 0;
-      else if (p < phases.right.from) gazeRot = lerp(0, -MAX, uL);
-      else if (p < phases.center.from) gazeRot = lerp(-MAX, MAX, uR);
-      else if (p < phases.down.from) gazeRot = lerp(MAX, 0, uC);
-      else gazeRot = 0;
+      // Looks left -> negative rotation (cards sweep right->left);
+      // looks right -> positive; centre -> back to straight. No free drift, so
+      // the ring never runs ahead of the head.
+      let rot = 0;
+      if (tsec < T.left.from) rot = 0;
+      else if (tsec < T.right.from) rot = lerp(0, -MAX, uL);
+      else if (tsec < T.center.from) rot = lerp(-MAX, MAX, uR);
+      else if (tsec < T.down.from) rot = lerp(MAX, 0, uC);
+      else rot = 0;
 
-      // A gentle continuous spin across the section so it always reads as a
-      // living carousel, with the gaze swing layered on top.
-      const drift = p * 40;
-      const rot = drift + gazeRot;
-
-      // Ring enters (fade + settle) and later drops into the gallery.
+      // Ring appears as the box takes the stage.
       const appear = easeInOut(clamp01(seg(p, phases.enter) * 1.4));
+
+      // Look down -> the photos gather in toward him (converge + shrink), slip
+      // BEHIND the subject, and dissolve.
       ringRot(rot);
-      ringScale(lerp(0.82, 1, appear));
-      ringY(uD * (mob ? 220 : 320));
-      ringOpacity(appear * (1 - uD * 0.95));
+      ringScale(lerp(lerp(0.82, 1, appear), 0.34, gather));
+      ringY(lerp(0, mob ? -20 : -30, gather)); // lift slightly as they gather in
+      ringOpacity(appear * (1 - gather));
+
+      // Tuck the whole ring behind the film (his image) while it gathers.
+      if (ringWrapRef.current) {
+        ringWrapRef.current.style.zIndex = gather > 0.4 ? '3' : '10';
+      }
 
       // Per-card depth cue: brighten the ones facing us, dim the far side.
-      // Cards stay a touch translucent (cap ~0.9) and the dead-front card ducks
-      // further, so the subject is never fully hidden behind a photo.
+      // (Overall fade is handled by the ring's group opacity above.)
       cardSetters.forEach((s, i) => {
         if (!s.o || !s.el) return;
         const front = Math.cos((seats[i] + rot) * DEG); // 1 = facing us, -1 = behind
@@ -307,7 +326,7 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
     });
 
     gsap.ticker.add(render);
-    layout(0);
+    layout(0, 0);
 
     return () => {
       gsap.ticker.remove(render);
@@ -376,6 +395,7 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
 
         {/* 3D ring (carousel) of work photos orbiting the subject */}
         <div
+          ref={ringWrapRef}
           className="pointer-events-none absolute inset-0 z-10 grid place-items-center"
           style={{ perspective: '1900px' }}
         >
