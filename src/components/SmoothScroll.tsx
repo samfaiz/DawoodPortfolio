@@ -15,7 +15,10 @@ gsap.registerPlugin(ScrollTrigger);
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) return;
+    // Skip Lenis on touch devices: native momentum scroll is smoother there and
+    // this drops a rAF loop that would otherwise fight the phone's scroller.
+    const touch = window.matchMedia('(pointer: coarse)').matches;
+    if (reduced || touch) return;
 
     const lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
 

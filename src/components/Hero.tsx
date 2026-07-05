@@ -137,19 +137,24 @@ export default function Hero({ hero, site }: { hero: HeroConfig; site: SiteConfi
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_70%_at_12%_92%,oklch(10%_0.01_60/0.85)_0%,transparent_60%)]" />
 
       {/* Top bar */}
-      <header className="absolute inset-x-0 top-0 z-20 flex items-center justify-between px-[var(--gutter)] py-5">
-        <div>
+      <header className="absolute inset-x-0 top-0 z-20 flex items-center justify-between gap-3 px-[var(--gutter)] py-5">
+        <div className="min-w-0">
           <p className="display text-xl leading-none">{site.name}</p>
-          <p className="exif mt-1">
-            {site.city} <b>·</b> {site.role}
+          <p className="exif mt-1 truncate">
+            {site.city}
+            <span className="hidden sm:inline">
+              {' '}
+              <b>·</b> {site.role}
+            </span>
           </p>
         </div>
         <a
           href="#contact"
-          className="exif border border-line px-4 py-2 transition-colors duration-300 ease-out-expo hover:border-amber hover:text-amber"
+          className="exif shrink-0 whitespace-nowrap border border-line px-3 py-2 transition-colors duration-300 ease-out-expo hover:border-amber hover:text-amber sm:px-4"
           style={{ color: 'var(--ink)' }}
         >
-          Book a shoot
+          <span className="sm:hidden">Book</span>
+          <span className="hidden sm:inline">Book a shoot</span>
         </a>
       </header>
 

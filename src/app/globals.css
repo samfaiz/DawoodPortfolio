@@ -168,3 +168,17 @@ html.lenis, html.lenis body { height: auto; }
   }
   html { scroll-behavior: auto; }
 }
+
+/* ------------------------------------------------------------------
+   Mobile / touch: drop the continuous full-screen grain repaint and
+   slow the marquee (a long track scrolling fast is costly on phones).
+------------------------------------------------------------------- */
+@media (pointer: coarse), (max-width: 767px) {
+  .grain::after {
+    animation: none;
+    opacity: 0.035;
+  }
+  .marquee-track {
+    animation-duration: 46s;
+  }
+}

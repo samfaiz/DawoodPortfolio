@@ -5,6 +5,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { BeatsConfig, WorkItem } from '@/lib/types';
 import ExifTag from './ExifTag';
+import { useIsMobile } from '@/lib/useIsMobile';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -46,6 +47,7 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
 
   const [reduced, setReduced] = useState(false);
   const [debug, setDebug] = useState<{ p: number; t: number; f: number } | null>(null);
+  const isMobile = useIsMobile();
 
   // The photos placed on the ring (up to eight reads well in 3D).
   const ringCards = useMemo(() => cards.slice(0, 8), [cards]);
@@ -100,25 +102,29 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
     };
 
     const render = () => {
-      const t = timeFor(progressRef.current);
-      // Ease the displayed time toward the target for a weighted, filmic scrub.
-      shownTimeRef.current = lerp(shownTimeRef.current, t, 0.18);
-      const shown = shownTimeRef.current;
+      // Mobile skips the canvas scrub entirely (the video just plays); we only
+      // drive the lightweight 3D ring from scroll. Desktop scrubs the film.
+      if (!isMobile) {
+        const t = timeFor(progressRef.current);
+        // Ease the displayed time toward the target for a weighted, filmic scrub.
+        shownTimeRef.current = lerp(shownTimeRef.current, t, 0.18);
+        const shown = shownTimeRef.current;
 
-      if (modeRef.current === 'frames') {
-        let idx = Math.round((shown / beats.duration) * (beats.frameCount - 1));
-        idx = Math.min(beats.frameCount - 1, Math.max(0, idx));
-        while (idx > 0 && !loadedRef.current[idx]) idx--;
-        const img = imagesRef.current[idx];
-        if (img) drawCover(img, img.naturalWidth, img.naturalHeight);
-        if (wantsDebug) setDebug({ p: progressRef.current, t: shown, f: idx });
-      } else if (modeRef.current === 'video') {
-        const v = videoRef.current;
-        if (v && v.readyState >= 2) {
-          if (Math.abs(v.currentTime - shown) > 1 / 30) v.currentTime = shown;
-          drawCover(v, v.videoWidth, v.videoHeight);
+        if (modeRef.current === 'frames') {
+          let idx = Math.round((shown / beats.duration) * (beats.frameCount - 1));
+          idx = Math.min(beats.frameCount - 1, Math.max(0, idx));
+          while (idx > 0 && !loadedRef.current[idx]) idx--;
+          const img = imagesRef.current[idx];
+          if (img) drawCover(img, img.naturalWidth, img.naturalHeight);
+          if (wantsDebug) setDebug({ p: progressRef.current, t: shown, f: idx });
+        } else if (modeRef.current === 'video') {
+          const v = videoRef.current;
+          if (v && v.readyState >= 2) {
+            if (Math.abs(v.currentTime - shown) > 1 / 30) v.currentTime = shown;
+            drawCover(v, v.videoWidth, v.videoHeight);
+          }
+          if (wantsDebug) setDebug({ p: progressRef.current, t: shown, f: -1 });
         }
-        if (wantsDebug) setDebug({ p: progressRef.current, t: shown, f: -1 });
       }
 
       layout(progressRef.current);
@@ -151,17 +157,29 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
       pump();
     };
 
-    const probe = new window.Image();
-    probe.onload = () => startFrames();
-    probe.onerror = () => {
+    if (isMobile) {
+      // Mobile: play the film as a muted looping background (hardware-decoded,
+      // cheap) instead of loading 240 frames or seeking per scroll tick.
       const v = videoRef.current;
-      if (!v) return;
-      v.src = beats.videoSrc;
-      v.addEventListener('loadeddata', () => (modeRef.current = 'video'), { once: true });
-      v.addEventListener('error', () => (modeRef.current = 'none'), { once: true });
-      v.load();
-    };
-    probe.src = frameUrl(0);
+      if (v) {
+        v.src = beats.videoSrc;
+        v.loop = true;
+        v.muted = true;
+        void v.play().catch(() => {});
+      }
+    } else {
+      const probe = new window.Image();
+      probe.onload = () => startFrames();
+      probe.onerror = () => {
+        const v = videoRef.current;
+        if (!v) return;
+        v.src = beats.videoSrc;
+        v.addEventListener('loadeddata', () => (modeRef.current = 'video'), { once: true });
+        v.addEventListener('error', () => (modeRef.current = 'none'), { once: true });
+        v.load();
+      };
+      probe.src = frameUrl(0);
+    }
 
     /* ---------------- responsive canvas ---------------- */
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -174,12 +192,12 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
     ro.observe(frameBox);
 
     /* ---------------- 3D ring setup ---------------- */
-    const isMobile = () => window.innerWidth < 768;
+    const narrow = () => window.innerWidth < 768;
     const phases = beats.cardPhases;
 
     // Ring radius from viewport, so cards orbit around the subject.
     const radiusFor = () =>
-      isMobile()
+      narrow()
         ? Math.min(window.innerWidth * 0.44, 240)
         : Math.min(window.innerWidth * 0.33, 560);
 
@@ -215,7 +233,7 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
       clamp01((p - ph.from) / (ph.to - ph.from));
 
     const layout = (p: number) => {
-      const mob = isMobile();
+      const mob = narrow();
 
       // Frame box: pinned left with copy on the right, then expands to centre.
       // Kept a touch smaller than before so the ring can orbit around it.
@@ -278,7 +296,8 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
     const st = ScrollTrigger.create({
       trigger: stage,
       start: 'top top',
-      end: '+=320%',
+      // Shorter pin distance on mobile so the section doesn't feel endless.
+      end: isMobile ? '+=170%' : '+=320%',
       pin: true,
       scrub: true,
       anticipatePin: 1,
@@ -296,7 +315,7 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
       ro.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [beats, timeFor, seats]);
+  }, [beats, timeFor, seats, isMobile]);
 
   /* ---------------- reduced motion fallback ---------------- */
   if (reduced) {
@@ -326,10 +345,17 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
           className="absolute top-1/2 z-[5] -translate-y-1/2 overflow-hidden border border-line bg-raise"
           style={{ width: '42vw', height: '58svh', left: '4vw' }}
         >
-          <canvas ref={canvasRef} className="h-full w-full" />
-          <video ref={videoRef} className="hidden" muted playsInline preload="auto" />
+          <canvas ref={canvasRef} className={isMobile ? 'hidden' : 'h-full w-full'} />
+          <video
+            ref={videoRef}
+            className={isMobile ? 'h-full w-full object-cover' : 'hidden'}
+            muted
+            loop={isMobile}
+            playsInline
+            preload={isMobile ? 'metadata' : 'auto'}
+          />
           <p className="exif pointer-events-none absolute bottom-3 left-3">
-            The studio <b>·</b> scrubbed by your scroll
+            The studio <b>·</b> {isMobile ? 'in motion' : 'scrubbed by your scroll'}
           </p>
         </div>
 

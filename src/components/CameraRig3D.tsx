@@ -7,6 +7,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { Group } from 'three';
 import ExifTag from './ExifTag';
+import { useIsMobile } from '@/lib/useIsMobile';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -78,12 +79,18 @@ export default function CameraRig3D() {
   const sectionRef = useRef<HTMLElement>(null);
   const progress = useRef(0);
   const [reduced, setReduced] = useState(false);
+  const isMobile = useIsMobile();
+
+  // On phones/tablets the WebGL scene is the single heaviest thing on the page
+  // (a continuous render loop), so we skip it and show a static card instead.
+  const show3D = !reduced && !isMobile;
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setReduced(true);
       return;
     }
+    if (isMobile) return;
     const st = ScrollTrigger.create({
       trigger: sectionRef.current,
       start: 'top bottom',
@@ -94,7 +101,7 @@ export default function CameraRig3D() {
       },
     });
     return () => st.kill();
-  }, []);
+  }, [isMobile]);
 
   return (
     <section ref={sectionRef} className="relative border-y border-line">
@@ -111,8 +118,8 @@ export default function CameraRig3D() {
             before the first exposure. Turn it over: scroll.
           </p>
         </div>
-        <div className="h-[52svh] md:h-[64svh]">
-          {!reduced ? (
+        <div className="h-[42svh] md:h-[64svh]">
+          {show3D ? (
             <Canvas dpr={[1, 1.75]} camera={{ position: [0, 0.4, 5.2], fov: 38 }} gl={{ antialias: true, alpha: true }}>
               <ambientLight intensity={0.25} />
               <pointLight position={[4, 3, 4]} intensity={55} color={'#f0b264'} />
@@ -120,7 +127,7 @@ export default function CameraRig3D() {
               <CameraModel progress={progress} />
             </Canvas>
           ) : (
-            <div className="grid h-full place-items-center border border-line bg-raise">
+            <div className="grid h-full place-items-center border border-line bg-[radial-gradient(120%_90%_at_50%_35%,var(--bg-raise),var(--bg))]">
               <span className="exif">Hasselblad H <b>·</b> 90MM <b>·</b> F/2.8</span>
             </div>
           )}
