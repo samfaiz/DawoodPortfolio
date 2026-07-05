@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import './globals.css';
 import { getSite } from '@/lib/content';
 import SmoothScroll from '@/components/SmoothScroll';
+import VisualEditor from '@/components/VisualEditor';
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSite();
@@ -26,6 +28,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="grain">
         <SmoothScroll>{children}</SmoothScroll>
+        <Suspense fallback={null}>
+          <VisualEditor />
+        </Suspense>
       </body>
     </html>
   );

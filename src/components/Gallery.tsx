@@ -84,7 +84,12 @@ export default function Gallery({ work }: { work: WorkConfig }) {
 
       <div ref={gridRef} className="mt-10 columns-1 gap-4 sm:columns-2 lg:columns-3">
         {items.map((item) => (
-          <figure key={item.id} className="mb-4 break-inside-avoid">
+          <figure
+            key={item.id}
+            className="mb-4 break-inside-avoid"
+            data-edit="work:items"
+            data-edit-kind="open"
+          >
             <button
               onClick={() => setOpen(item)}
               className="group relative block w-full overflow-hidden border border-line bg-raise"

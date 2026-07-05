@@ -15,15 +15,15 @@ export default function About({ about }: { about: AboutConfig }) {
           </h2>
           <div className="mt-6 max-w-xl space-y-4 text-muted">
             {about.paragraphs.map((p, i) => (
-              <p key={i}>{p}</p>
+              <p key={i} data-edit={`about:paragraphs.${i}`}>{p}</p>
             ))}
           </div>
 
           <dl className="mt-10 grid max-w-xl grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4">
-            {about.stats.map((s) => (
+            {about.stats.map((s, i) => (
               <div key={s.label}>
-                <dt className="exif order-2">{s.label}</dt>
-                <dd className="display text-4xl" style={{ color: 'var(--amber)' }}>
+                <dt className="exif order-2" data-edit={`about:stats.${i}.label`}>{s.label}</dt>
+                <dd className="display text-4xl" data-edit={`about:stats.${i}.value`} style={{ color: 'var(--amber)' }}>
                   {s.value}
                 </dd>
               </div>
@@ -35,7 +35,11 @@ export default function About({ about }: { about: AboutConfig }) {
           </p>
         </div>
 
-        <figure className="relative min-h-[26rem] overflow-hidden border border-line md:min-h-0">
+        <figure
+          className="relative min-h-[26rem] overflow-hidden border border-line md:min-h-0"
+          data-edit="about:portrait"
+          data-edit-kind="open"
+        >
           <Image
             src={about.portrait}
             alt={about.portraitAlt}

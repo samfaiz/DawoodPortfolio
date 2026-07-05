@@ -139,7 +139,7 @@ export default function Hero({ hero, site }: { hero: HeroConfig; site: SiteConfi
       {/* Top bar */}
       <header className="absolute inset-x-0 top-0 z-20 flex items-center justify-between gap-3 px-[var(--gutter)] py-5">
         <div className="min-w-0">
-          <p className="display text-xl leading-none">{site.name}</p>
+          <p className="display text-xl leading-none" data-edit="site:name">{site.name}</p>
           <p className="exif mt-1 truncate">
             {site.city}
             <span className="hidden sm:inline">

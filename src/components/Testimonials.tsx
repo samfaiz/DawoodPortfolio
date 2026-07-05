@@ -13,10 +13,11 @@ export default function Testimonials({ items }: { items: Testimonial[] }) {
       <ExifTag>Word of mouth</ExifTag>
       <blockquote key={index} className="mt-6 max-w-4xl">
         <p className="display text-[clamp(1.7rem,3.6vw,3.2rem)] normal-case leading-tight">
-          &ldquo;{t.quote}&rdquo;
+          &ldquo;<span data-edit={`testimonials:items.${index}.quote`}>{t.quote}</span>&rdquo;
         </p>
         <footer className="exif mt-6">
-          {t.name} <b>·</b> {t.org}
+          <span data-edit={`testimonials:items.${index}.name`}>{t.name}</span> <b>·</b>{' '}
+          <span data-edit={`testimonials:items.${index}.org`}>{t.org}</span>
         </footer>
       </blockquote>
 
