@@ -19,15 +19,23 @@ import InstagramFeed from '@/components/InstagramFeed';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  // In the admin's visual editor (?visualEdit=1) fetch fresh so saved edits
+  // show immediately; otherwise use the cached (ISR) content.
+  const fresh = (await searchParams).visualEdit !== undefined;
+
   const [site, hero, beats, work, about, services, testimonials] = await Promise.all([
-    getSite(),
-    getHero(),
-    getBeats(),
-    getWork(),
-    getAbout(),
-    getServices(),
-    getTestimonials(),
+    getSite(fresh),
+    getHero(fresh),
+    getBeats(fresh),
+    getWork(fresh),
+    getAbout(fresh),
+    getServices(fresh),
+    getTestimonials(fresh),
   ]);
 
   const floating = work.floatingCards

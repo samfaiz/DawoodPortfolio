@@ -83,12 +83,15 @@ export default function Gallery({ work }: { work: WorkConfig }) {
       </div>
 
       <div ref={gridRef} className="mt-10 columns-1 gap-4 sm:columns-2 lg:columns-3">
-        {items.map((item) => (
+        {items.map((item) => {
+          const idx = work.items.findIndex((x) => x.id === item.id);
+          return (
           <figure
             key={item.id}
             className="mb-4 break-inside-avoid"
-            data-edit="work:items"
-            data-edit-kind="open"
+            data-edit={`work:items.${idx}.src`}
+            data-edit-kind="image"
+            data-edit-src={item.src}
           >
             <button
               onClick={() => setOpen(item)}
@@ -110,7 +113,8 @@ export default function Gallery({ work }: { work: WorkConfig }) {
               </figcaption>
             </button>
           </figure>
-        ))}
+          );
+        })}
       </div>
 
       {open && (

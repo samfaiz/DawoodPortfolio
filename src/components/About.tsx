@@ -38,7 +38,8 @@ export default function About({ about }: { about: AboutConfig }) {
         <figure
           className="relative min-h-[26rem] overflow-hidden border border-line md:min-h-0"
           data-edit="about:portrait"
-          data-edit-kind="open"
+          data-edit-kind="image"
+          data-edit-src={about.portrait}
         >
           <Image
             src={about.portrait}

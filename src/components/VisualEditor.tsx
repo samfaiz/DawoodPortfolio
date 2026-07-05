@@ -51,6 +51,16 @@ export default function VisualEditor() {
             el.removeEventListener('blur', onBlur);
             el.removeEventListener('click', onClick);
           });
+        } else if (kind === 'image') {
+          // Clicking an image asks the admin to pick/paste a replacement.
+          el.style.cursor = 'pointer';
+          const onClick = (e: Event) => {
+            e.preventDefault();
+            e.stopPropagation();
+            post({ type: 'image', path, value: el.getAttribute('data-edit-src') || '' });
+          };
+          el.addEventListener('click', onClick, true);
+          cleanups.push(() => el.removeEventListener('click', onClick, true));
         } else {
           // "open" — clicking sends the admin to that section's editor.
           el.style.cursor = 'pointer';
