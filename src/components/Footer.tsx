@@ -3,7 +3,7 @@ import type { SiteConfig } from '@/lib/types';
 export default function Footer({ site }: { site: SiteConfig }) {
   const year = new Date().getFullYear();
   return (
-    <footer className="border-t border-line px-[var(--gutter)] pb-10 pt-[var(--space-section)]">
+    <footer data-section="footer" className="border-t border-line px-[var(--gutter)] pb-10 pt-[var(--space-section)]">
       <p className="display text-[clamp(4rem,17vw,17rem)] leading-[0.85] text-raise" aria-hidden="true">
         Dawood
       </p>

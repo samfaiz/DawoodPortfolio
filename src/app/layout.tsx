@@ -24,6 +24,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Overrides are injected by page.tsx (see the __overrides script tag and
+  // <OverrideRenderer> mount there) so the fetch stays inside the ISR
+  // segment and layout remains statically renderable.
   return (
     <html lang="en">
       <body className="grain">

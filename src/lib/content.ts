@@ -22,6 +22,7 @@ import type {
   AboutConfig,
   BeatsConfig,
   HeroConfig,
+  OverridesConfig,
   ServiceItem,
   SiteConfig,
   Testimonial,
@@ -35,16 +36,17 @@ const REVALIDATE = 300;
 
 /**
  * Fetch one section from the CMS, falling back to the bundled JSON on any
- * problem (no CMS_URL, network error, non-2xx, or bad JSON).
+ * problem (no CMS_URL, network error, non-2xx, or bad JSON). When `fresh`
+ * is true (the Edit Visually iframe), we also bypass the CDN cache and
+ * request the DRAFT payload so admins see their unpublished edits.
  */
 async function fetchSection<T>(key: string, fallback: T, fresh = false): Promise<T> {
   if (!CMS_URL) return fallback;
 
   try {
-    // In the visual editor (fresh) we bypass the ISR cache so saved edits show
-    // immediately; public requests stay cached and revalidate on a schedule.
+    const url = fresh ? `${CMS_URL}/api/${key}?draft=1` : `${CMS_URL}/api/${key}`;
     const res = await fetch(
-      `${CMS_URL}/api/${key}`,
+      url,
       fresh ? { cache: 'no-store' } : { next: { revalidate: REVALIDATE, tags: [`content:${key}`] } }
     );
     if (!res.ok) return fallback;
@@ -90,4 +92,29 @@ export async function getTestimonials(fresh = false): Promise<Testimonial[]> {
 
 export async function getAbout(fresh = false): Promise<AboutConfig> {
   return fetchSection<AboutConfig>('about', aboutLocal as AboutConfig, fresh);
+}
+
+/**
+ * Per-element visual-editor overrides. Empty object means no overrides —
+ * safe to call even when the CMS is offline (falls back to {}). Passes
+ * ?draft=1 in the Edit Visually iframe just like the other section getters.
+ */
+export async function getOverrides(fresh = false): Promise<OverridesConfig> {
+  const empty: OverridesConfig = {};
+  if (!CMS_URL) return empty;
+
+  try {
+    const url = fresh ? `${CMS_URL}/api/overrides?draft=1` : `${CMS_URL}/api/overrides`;
+    const res = await fetch(
+      url,
+      fresh ? { cache: 'no-store' } : { next: { revalidate: REVALIDATE, tags: ['content:overrides'] } }
+    );
+    if (!res.ok) return empty;
+    const data = await res.json();
+    // Laravel returns [] for an empty PHP array; normalise to {}.
+    if (Array.isArray(data)) return empty;
+    return (data as OverridesConfig) ?? empty;
+  } catch {
+    return empty;
+  }
 }

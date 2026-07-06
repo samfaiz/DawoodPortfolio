@@ -9,7 +9,7 @@ export default function Testimonials({ items }: { items: Testimonial[] }) {
   const t = items[index];
 
   return (
-    <section className="border-t border-line px-[var(--gutter)] py-[var(--space-section)]">
+    <section data-section="testimonials" className="border-t border-line px-[var(--gutter)] py-[var(--space-section)]">
       <ExifTag>Word of mouth</ExifTag>
       <blockquote key={index} className="mt-6 max-w-4xl">
         <p className="display text-[clamp(1.7rem,3.6vw,3.2rem)] normal-case leading-tight">

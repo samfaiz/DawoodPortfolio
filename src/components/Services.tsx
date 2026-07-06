@@ -3,7 +3,7 @@ import ExifTag from './ExifTag';
 
 export default function Services({ services }: { services: ServiceItem[] }) {
   return (
-    <section id="services" className="border-t border-line px-[var(--gutter)] py-[var(--space-section)]">
+    <section id="services" data-section="services" className="border-t border-line px-[var(--gutter)] py-[var(--space-section)]">
       <ExifTag>Commissions</ExifTag>
       <h2 className="display display-section mt-4">What I shoot</h2>
 

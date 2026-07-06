@@ -114,7 +114,7 @@ export default function Hero({ hero, site }: { hero: HeroConfig; site: SiteConfi
   };
 
   return (
-    <section id="top" className="relative h-[100svh] overflow-hidden bg-bg">
+    <section id="top" data-section="hero" className="relative h-[100svh] overflow-hidden bg-bg">
       {/* Film */}
       {!missing && (
         <video

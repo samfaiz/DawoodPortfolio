@@ -2,6 +2,7 @@ import {
   getAbout,
   getBeats,
   getHero,
+  getOverrides,
   getServices,
   getSite,
   getTestimonials,
@@ -18,6 +19,7 @@ import Testimonials from '@/components/Testimonials';
 import InstagramFeed from '@/components/InstagramFeed';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
+import OverrideRenderer from '@/components/OverrideRenderer';
 
 export default async function Page({
   searchParams,
@@ -28,7 +30,7 @@ export default async function Page({
   // show immediately; otherwise use the cached (ISR) content.
   const fresh = (await searchParams).visualEdit !== undefined;
 
-  const [site, hero, beats, work, about, services, testimonials] = await Promise.all([
+  const [site, hero, beats, work, about, services, testimonials, overrides] = await Promise.all([
     getSite(fresh),
     getHero(fresh),
     getBeats(fresh),
@@ -36,6 +38,7 @@ export default async function Page({
     getAbout(fresh),
     getServices(fresh),
     getTestimonials(fresh),
+    getOverrides(fresh),
   ]);
 
   const floating = work.floatingCards
@@ -55,6 +58,13 @@ export default async function Page({
       <InstagramFeed site={site} tiles={work.items} />
       <Contact site={site} />
       <Footer site={site} />
+      {/* Bootstrap for the visual editor + applier for the public site. */}
+      <script
+        id="__overrides"
+        type="application/json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(overrides) }}
+      />
+      <OverrideRenderer overrides={overrides} />
     </main>
   );
 }

@@ -339,7 +339,7 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
   /* ---------------- reduced motion fallback ---------------- */
   if (reduced) {
     return (
-      <section id="work" className="px-[var(--gutter)] py-[var(--space-section)]">
+      <section id="work" data-section="work" className="px-[var(--gutter)] py-[var(--space-section)]">
         <ExifTag>The studio</ExifTag>
         <h2 className="display display-section mt-4 max-w-4xl">A few samples of my work</h2>
         <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-3">
@@ -356,7 +356,7 @@ export default function ScrubSection({ beats, cards }: { beats: BeatsConfig; car
   }
 
   return (
-    <section id="work">
+    <section id="work" data-section="work">
       <div ref={stageRef} className="relative h-[100svh] overflow-hidden bg-bg">
         {/* Film box */}
         <div

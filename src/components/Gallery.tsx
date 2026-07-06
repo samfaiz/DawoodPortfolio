@@ -57,7 +57,7 @@ export default function Gallery({ work }: { work: WorkConfig }) {
   }, [open, items]);
 
   return (
-    <section id="gallery" className="px-[var(--gutter)] py-[var(--space-section)]">
+    <section id="gallery" data-section="gallery" className="px-[var(--gutter)] py-[var(--space-section)]">
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
           <ExifTag>Full gallery</ExifTag>
@@ -89,16 +89,23 @@ export default function Gallery({ work }: { work: WorkConfig }) {
           <figure
             key={item.id}
             className="mb-4 break-inside-avoid"
-            data-edit={`work:items.${idx}.src`}
-            data-edit-kind="image"
-            data-edit-src={item.src}
           >
             <button
               onClick={() => setOpen(item)}
               className="group relative block w-full overflow-hidden border border-line bg-raise"
               aria-label={`Open ${item.title}`}
             >
-              <div className="relative w-full" style={{ aspectRatio: item.ratio }}>
+              {/* Image marker sits on the inner wrapper so clicking the
+                  caption text below opens the text editor, not the image
+                  upload panel (the caption is no longer nested inside the
+                  data-edit-kind="image" element). */}
+              <div
+                className="relative w-full"
+                style={{ aspectRatio: item.ratio }}
+                data-edit={`work:items.${idx}.src`}
+                data-edit-kind="image"
+                data-edit-src={item.src}
+              >
                 <Image
                   src={item.src}
                   alt={item.title}
@@ -108,8 +115,8 @@ export default function Gallery({ work }: { work: WorkConfig }) {
                 />
               </div>
               <figcaption className="flex items-center justify-between gap-3 px-3 py-2.5 text-left">
-                <span className="text-sm text-ink">{item.title}</span>
-                <span className="exif shrink-0">{item.exif}</span>
+                <span className="text-sm text-ink" data-edit={`work:items.${idx}.title`}>{item.title}</span>
+                <span className="exif shrink-0" data-edit={`work:items.${idx}.exif`}>{item.exif}</span>
               </figcaption>
             </button>
           </figure>

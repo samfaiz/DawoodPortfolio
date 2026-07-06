@@ -30,7 +30,7 @@ export default function Contact({ site }: { site: SiteConfig }) {
     'w-full border border-line bg-raise px-4 py-3 text-ink placeholder:text-muted focus:border-amber focus:outline-none transition-colors duration-300';
 
   return (
-    <section id="contact" className="border-t border-line px-[var(--gutter)] py-[var(--space-section)]">
+    <section id="contact" data-section="contact" className="border-t border-line px-[var(--gutter)] py-[var(--space-section)]">
       <div className="grid gap-12 md:grid-cols-[1fr_1.2fr] md:gap-16">
         <div>
           <ExifTag>Bookings</ExifTag>

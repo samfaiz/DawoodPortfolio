@@ -4,7 +4,7 @@ import ExifTag from './ExifTag';
 
 export default function About({ about }: { about: AboutConfig }) {
   return (
-    <section id="about" className="border-t border-line px-[var(--gutter)] py-[var(--space-section)]">
+    <section id="about" data-section="about" className="border-t border-line px-[var(--gutter)] py-[var(--space-section)]">
       <div className="grid gap-10 md:grid-cols-[1.1fr_1fr] md:gap-16">
         <div>
           <ExifTag>Behind the camera</ExifTag>
@@ -35,19 +35,23 @@ export default function About({ about }: { about: AboutConfig }) {
           </p>
         </div>
 
-        <figure
-          className="relative min-h-[26rem] overflow-hidden border border-line md:min-h-0"
-          data-edit="about:portrait"
-          data-edit-kind="image"
-          data-edit-src={about.portrait}
-        >
-          <Image
-            src={about.portrait}
-            alt={about.portraitAlt}
-            fill
-            sizes="(max-width: 768px) 100vw, 45vw"
-            className="object-cover"
-          />
+        <figure className="relative min-h-[26rem] overflow-hidden border border-line md:min-h-0">
+          {/* Image marker sits on this inner div so clicking the caption
+              below opens the text editor, not the image upload panel. */}
+          <div
+            className="absolute inset-0"
+            data-edit="about:portrait"
+            data-edit-kind="image"
+            data-edit-src={about.portrait}
+          >
+            <Image
+              src={about.portrait}
+              alt={about.portraitAlt}
+              fill
+              sizes="(max-width: 768px) 100vw, 45vw"
+              className="object-cover"
+            />
+          </div>
           <figcaption className="exif absolute bottom-3 left-3 bg-raise/90 px-3 py-1.5">
             Self portrait <b>·</b> F/2 <b>·</b> 50MM
           </figcaption>

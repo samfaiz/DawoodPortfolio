@@ -17,7 +17,7 @@ import ExifTag from './ExifTag';
  */
 export default function InstagramFeed({ site, tiles }: { site: SiteConfig; tiles: WorkItem[] }) {
   return (
-    <section className="border-t border-line px-[var(--gutter)] py-[var(--space-section)]">
+    <section data-section="instagram" className="border-t border-line px-[var(--gutter)] py-[var(--space-section)]">
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
           <ExifTag>Daily updates</ExifTag>
