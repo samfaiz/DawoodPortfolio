@@ -54,6 +54,12 @@ export default function Hero({ hero, site }: { hero: HeroConfig; site: SiteConfi
 
     const events: (keyof WindowEventMap)[] = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
     const unmute = () => {
+      // The muted autoplay has been advancing v.currentTime while the viewer
+      // heard nothing and read captions in silence. Once they interact and
+      // audio is unlocked, restart the film from the top so the voiceover,
+      // captions, and right-rail card beats all resync from t=0.
+      v.currentTime = 0;
+      setEnded(false);
       v.muted = false;
       v.volume = 1;
       void v.play();

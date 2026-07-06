@@ -20,6 +20,7 @@ import InstagramFeed from '@/components/InstagramFeed';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import OverrideRenderer from '@/components/OverrideRenderer';
+import Preloader from '@/components/Preloader';
 
 export default async function Page({
   searchParams,
@@ -47,6 +48,7 @@ export default async function Page({
 
   return (
     <main>
+      <Preloader />
       <Hero hero={hero} site={site} />
       <Marquee />
       <ScrubSection beats={beats} cards={floating} />
